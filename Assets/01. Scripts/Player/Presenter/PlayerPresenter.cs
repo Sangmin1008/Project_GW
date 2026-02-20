@@ -31,6 +31,11 @@ public class PlayerPresenter : IStartable, IDisposable
         _model.CurrentLookAngle
             .Subscribe(input => _view.ApplyLook(input))
             .AddTo(_disposables);
+        
+        _model.CurrentAnimation
+            .DistinctUntilChanged()
+            .Subscribe(animName => _view.PlayAnimation(animName))
+            .AddTo(_disposables);
     }
 
     public void Dispose() => _disposables.Dispose();

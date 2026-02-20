@@ -62,4 +62,9 @@ public class PlayerView : MonoBehaviour
         _camera.transform.localRotation = Quaternion.Euler(pitch, 0, 0);
         transform.localRotation = Quaternion.Euler(0, yaw, 0);
     }
+
+    public void PlayAnimation(string name)
+    {
+        
+    }
 }
