@@ -1,3 +1,4 @@
+using UniRx;
 using UnityEngine;
 
 public class MoveState : State
@@ -8,6 +9,29 @@ public class MoveState : State
 
     protected override void OnEnter()
     {
+        base.OnEnter();
+
+        _model.MoveInput
+            .Subscribe(input =>
+            {
+                if (input.sqrMagnitude == 0) _stateMachine.ChangeState(_model.IdleState);
+                else _model.CalculateVelocity(_model.Config.MoveSpeed);
+            })
+            .AddTo(StateDisposables);
+
+        _model.IsRunning
+            .Where(r => r)
+            .Subscribe(_ => _stateMachine.ChangeState(_model.RunState))
+            .AddTo(StateDisposables);
         
+        _model.IsJumping
+            .Where(j => j)
+            .Subscribe(_ => _stateMachine.ChangeState(_model.JumpState))
+            .AddTo(StateDisposables);
+        
+        _model.IsGrounded
+            .Where(g => !g)
+            .Subscribe(_ => _stateMachine.ChangeState(_model.FallState))
+            .AddTo(StateDisposables);
     }
 }

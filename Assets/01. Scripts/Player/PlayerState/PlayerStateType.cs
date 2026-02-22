@@ -1,7 +1,11 @@
 public enum PlayerStateType
 {
     Idle = 1,
-    Walk = 2,
-    Aiming = 4,
-    Dead = 8,
+    Move = 2,
+    Run = 4,
+    Jump = 8,
+    Fall = 16,
+    Attack = 32,
+    Aim = 64,
+    Dead = 128,
 }

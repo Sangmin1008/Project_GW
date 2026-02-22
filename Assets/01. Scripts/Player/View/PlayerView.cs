@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 
 [RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(GroundDetector))]
 public class PlayerView : MonoBehaviour
 {
     public PlayerInput Input;
@@ -12,6 +13,8 @@ public class PlayerView : MonoBehaviour
     private Camera _camera;
     private Vector3 _velocity;
     private CharacterController _characterController;
+    private GroundDetector _groundDetector;
+    private Animator _animator;
     
     public IObservable<Vector2> OnMoveInput => Observable
         .EveryUpdate()
@@ -19,6 +22,18 @@ public class PlayerView : MonoBehaviour
     public IObservable<Vector2> OnLookInput => Observable
         .EveryUpdate()
         .Select(_ => Input.Player.Look.ReadValue<Vector2>());
+    public IObservable<bool> OnRunInput => Observable
+        .EveryUpdate()
+        .Select(_ => Input.Player.Run.IsPressed())
+        .DistinctUntilChanged();
+    public IObservable<bool> OnJumpInput => Observable
+        .EveryUpdate()
+        .Select(_ => Input.Player.Jump.IsPressed())
+        .DistinctUntilChanged();
+    public IObservable<bool> OnGroundedState => Observable
+        .EveryUpdate()
+        .Select(_ => _characterController.isGrounded)
+        .DistinctUntilChanged();
 
     void Awake()
     {
@@ -26,6 +41,8 @@ public class PlayerView : MonoBehaviour
         
         _camera = Camera.main;
         _characterController = GetComponent<CharacterController>();
+        _groundDetector = GetComponent<GroundDetector>();
+        _animator = GetComponentInChildren<Animator>();
     }
     
     void OnEnable() => Input.Enable();
@@ -51,10 +68,7 @@ public class PlayerView : MonoBehaviour
             .Select(_ => _velocity)
             .Subscribe(input =>
             {
-                if (input.sqrMagnitude > 0)
-                {
-                    _characterController.Move(input * Time.fixedDeltaTime);
-                }
+                _characterController.Move(input * Time.fixedDeltaTime);
             });
     }
 

@@ -8,6 +8,10 @@ public interface IPlayerModel
     IReadOnlyReactiveProperty<Vector2> CurrentLookAngle { get; }
     IReadOnlyReactiveProperty<string> CurrentAnimation { get; }
     
-    void Move(Vector2 input);
+    void SetMoveInput(Vector2 input);
+    public void SetRunInput(bool isRunning);
+    public void SetJumpInput(bool isJumping);
+    public void SetGrounded(bool isGrounded);
+    public void ApplyGravity(float deltaTime);
     void Look(Vector2 input);
 }

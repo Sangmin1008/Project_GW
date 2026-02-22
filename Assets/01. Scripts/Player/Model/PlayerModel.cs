@@ -3,8 +3,7 @@ using UnityEngine;
 
 public class PlayerModel : IPlayerModel
 {
-    private readonly PlayerConfig _config;
-    
+    public PlayerConfig Config { get; private set; }
     public StateMachine PlayerStateMachine { get; private set; }
     public State IdleState { get; private set; }
     public State MoveState { get; private set; }
@@ -14,24 +13,28 @@ public class PlayerModel : IPlayerModel
     
     
     private readonly ReactiveProperty<PlayerStateType> _currentState = new(PlayerStateType.Idle);
-    public IReadOnlyReactiveProperty<PlayerStateType> CurrentState => _currentState;
-
     private readonly ReactiveProperty<Vector3> _currentVelocity = new(Vector3.zero);
-    public IReadOnlyReactiveProperty<Vector3> CurrentVelocity => _currentVelocity;
-    
-    private readonly ReactiveProperty<Vector2> _currentLookAngle = new ReactiveProperty<Vector2>(Vector2.zero);
-    public IReadOnlyReactiveProperty<Vector2> CurrentLookAngle => _currentLookAngle;
-    
+    private readonly ReactiveProperty<Vector2> _currentLookAngle = new(Vector2.zero);
     private readonly ReactiveProperty<string> _currentAnimation = new("Idle");
+
+    public IReadOnlyReactiveProperty<PlayerStateType> CurrentState => _currentState;
+    public IReadOnlyReactiveProperty<Vector3> CurrentVelocity => _currentVelocity;
+    public IReadOnlyReactiveProperty<Vector2> CurrentLookAngle => _currentLookAngle;
     public IReadOnlyReactiveProperty<string> CurrentAnimation => _currentAnimation;
+
+    public ReactiveProperty<Vector2> MoveInput { get; } = new(Vector2.zero);
+    public ReactiveProperty<bool> IsRunning { get; } = new(false);
+    public ReactiveProperty<bool> IsJumping { get; } = new(false);
+    public ReactiveProperty<bool> IsGrounded { get; } = new(true);
     
     
     private float _pitch = 0f;
     private float _yaw = 0f;
+    private const float Gravity = -19.62f;
 
     public PlayerModel(PlayerConfig config)
     {
-        _config = config;
+        Config = config;
         PlayerStateMachine = new StateMachine();
 
         IdleState   = new IdleState(this, PlayerStateMachine, "Idle");
@@ -43,28 +46,54 @@ public class PlayerModel : IPlayerModel
         PlayerStateMachine.Initialize(IdleState);
     }
 
+    public void SetMoveInput(Vector2 input) => MoveInput.Value = input;
+    public void SetRunInput(bool isRunning) => IsRunning.Value = isRunning;
+    public void SetJumpInput(bool isJumping) => IsJumping.Value = isJumping;
+    public void SetGrounded(bool isGrounded) => IsGrounded.Value = isGrounded;
     
-    public void Move(Vector2 input)
+    public void CalculateVelocity(float speed)
     {
-        if (input.sqrMagnitude > 0.01f)
+        if (MoveInput.Value.sqrMagnitude > 0.01f)
         {
-            Vector3 localDirection = new Vector3(input.x, 0, input.y);
+            Vector3 localDirection = new Vector3(MoveInput.Value.x, 0, MoveInput.Value.y);
             Quaternion playerRotation = Quaternion.Euler(0, _currentLookAngle.Value.y, 0);
-            
             Vector3 worldDirection = playerRotation * localDirection;
-            _currentVelocity.Value = worldDirection * _config.MoveSpeed;
+            
+            _currentVelocity.Value = new Vector3(worldDirection.x * speed, _currentVelocity.Value.y, worldDirection.z * speed);
         }
         else
-            _currentVelocity.Value = Vector3.zero;
+        {
+            _currentVelocity.Value = new Vector3(0, _currentVelocity.Value.y, 0);
+        }
+    }
+
+    public void SetVerticalVelocity(float yVelocity)
+    {
+        _currentVelocity.Value = new Vector3(_currentVelocity.Value.x, yVelocity, _currentVelocity.Value.z);
     }
 
     public void Look(Vector2 input)
     {
-        _yaw += input.x * _config.RotationSpeed;
-        _pitch -= input.y * _config.RotationSpeed;
+        _yaw += input.x * Config.RotationSpeed;
+        _pitch -= input.y * Config.RotationSpeed;
         _pitch = Mathf.Clamp(_pitch, -89f, 89f);
 
         _currentLookAngle.Value = new Vector2(_pitch, _yaw);
+    }
+    
+    public void ApplyGravity(float deltaTime)
+    {
+        Vector3 currentVel = _currentVelocity.Value;
+
+        if (IsGrounded.Value && currentVel.y < 0)
+        {
+            _currentVelocity.Value = new Vector3(currentVel.x, -2f, currentVel.z);
+        }
+        else
+        {
+            float newY = currentVel.y + Gravity * deltaTime;
+            _currentVelocity.Value = new Vector3(currentVel.x, newY, currentVel.z);
+        }
     }
     
     public void SetCurrentAnimation(string animName)
