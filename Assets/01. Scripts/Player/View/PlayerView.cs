@@ -4,12 +4,15 @@ using UniRx.Triggers;
 using UnityEngine;
 using UnityEngine.Rendering;
 
+[RequireComponent(typeof(CharacterController))]
 public class PlayerView : MonoBehaviour
 {
     public PlayerInput Input;
     
     private Camera _camera;
     private Vector3 _velocity;
+    private CharacterController _characterController;
+    
     public IObservable<Vector2> OnMoveInput => Observable
         .EveryUpdate()
         .Select(_ => Input.Player.Move.ReadValue<Vector2>());
@@ -22,6 +25,7 @@ public class PlayerView : MonoBehaviour
         Input = new PlayerInput();
         
         _camera = Camera.main;
+        _characterController = GetComponent<CharacterController>();
     }
     
     void OnEnable() => Input.Enable();
@@ -49,7 +53,7 @@ public class PlayerView : MonoBehaviour
             {
                 if (input.sqrMagnitude > 0)
                 {
-                    transform.Translate(input * Time.fixedDeltaTime, Space.Self);
+                    _characterController.Move(input * Time.fixedDeltaTime);
                 }
             });
     }

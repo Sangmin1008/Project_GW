@@ -30,6 +30,9 @@ public abstract class State
         StateDisposables.Clear();
     }
 
-    protected abstract void OnEnter();
+    protected virtual void OnEnter()
+    {
+        Debug.Log("Current State = " + _animationName);
+    }
     protected virtual void OnExit() {}
 }

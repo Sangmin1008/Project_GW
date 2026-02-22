@@ -3,9 +3,15 @@ using UnityEngine;
 
 public class PlayerModel : IPlayerModel
 {
+    private readonly PlayerConfig _config;
+    
     public StateMachine PlayerStateMachine { get; private set; }
     public State IdleState { get; private set; }
     public State MoveState { get; private set; }
+    public State RunState { get; private set; }
+    public State JumpState { get; private set; }
+    public State FallState { get; private set; }
+    
     
     private readonly ReactiveProperty<PlayerStateType> _currentState = new(PlayerStateType.Idle);
     public IReadOnlyReactiveProperty<PlayerStateType> CurrentState => _currentState;
@@ -23,12 +29,16 @@ public class PlayerModel : IPlayerModel
     private float _pitch = 0f;
     private float _yaw = 0f;
 
-    public PlayerModel()
+    public PlayerModel(PlayerConfig config)
     {
+        _config = config;
         PlayerStateMachine = new StateMachine();
 
-        // IdleState = new IdleState(this, PlayerStateMachine, "Idle");
-        // MoveState = new MoveState(this, PlayerStateMachine, "Move");
+        IdleState   = new IdleState(this, PlayerStateMachine, "Idle");
+        MoveState   = new MoveState(this, PlayerStateMachine, "Move");
+        RunState    = new RunState(this, PlayerStateMachine, "Run");
+        JumpState   = new JumpState(this, PlayerStateMachine, "Jump");
+        FallState   = new FallState(this, PlayerStateMachine, "Fall");
         
         PlayerStateMachine.Initialize(IdleState);
     }
@@ -37,15 +47,21 @@ public class PlayerModel : IPlayerModel
     public void Move(Vector2 input)
     {
         if (input.sqrMagnitude > 0.01f)
-            _currentVelocity.Value = new Vector3(input.x, 0, input.y) * 3f;
+        {
+            Vector3 localDirection = new Vector3(input.x, 0, input.y);
+            Quaternion playerRotation = Quaternion.Euler(0, _currentLookAngle.Value.y, 0);
+            
+            Vector3 worldDirection = playerRotation * localDirection;
+            _currentVelocity.Value = worldDirection * _config.MoveSpeed;
+        }
         else
             _currentVelocity.Value = Vector3.zero;
     }
 
     public void Look(Vector2 input)
     {
-        _yaw += input.x * 0.1f;
-        _pitch -= input.y * 0.1f;
+        _yaw += input.x * _config.RotationSpeed;
+        _pitch -= input.y * _config.RotationSpeed;
         _pitch = Mathf.Clamp(_pitch, -89f, 89f);
 
         _currentLookAngle.Value = new Vector2(_pitch, _yaw);
