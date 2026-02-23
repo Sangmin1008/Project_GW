@@ -15,7 +15,8 @@ public class FallState : State
             .Subscribe(_ => _model.CalculateVelocity(_model.Config.MoveSpeed))
             .AddTo(StateDisposables);
 
-        _model.IsGrounded.Where(g => g)
+        _model.IsGrounded
+            .Where(g => g)
             .Subscribe(_ => 
             {
                 if (_model.MoveInput.Value.sqrMagnitude == 0)

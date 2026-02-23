@@ -18,7 +18,7 @@ public class IdleState : State
             .AddTo(StateDisposables);
         
         _model.IsJumping
-            .Where(j => j)
+            .Where(j => j && _model.IsGrounded.Value)
             .Subscribe(_ => _stateMachine.ChangeState(_model.JumpState))
             .AddTo(StateDisposables);
         

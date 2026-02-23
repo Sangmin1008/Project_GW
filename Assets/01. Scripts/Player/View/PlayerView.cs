@@ -3,6 +3,7 @@ using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
 using UnityEngine.Rendering;
+using VContainer;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(GroundDetector))]
@@ -32,13 +33,17 @@ public class PlayerView : MonoBehaviour
         .DistinctUntilChanged();
     public IObservable<bool> OnGroundedState => Observable
         .EveryUpdate()
-        .Select(_ => _characterController.isGrounded)
+        .Select(_ => _groundDetector.IsGrounded)
         .DistinctUntilChanged();
+    
+    [Inject]
+    public void Construct(PlayerInput playerInput)
+    {
+        Input = playerInput;
+    }
 
     void Awake()
     {
-        Input = new PlayerInput();
-        
         _camera = Camera.main;
         _characterController = GetComponent<CharacterController>();
         _groundDetector = GetComponent<GroundDetector>();

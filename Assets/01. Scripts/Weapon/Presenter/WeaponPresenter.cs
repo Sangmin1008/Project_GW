@@ -5,48 +5,39 @@ using UniRx;
 using UnityEngine;
 using VContainer.Unity;
 
-public class WeaponPresenter : IAsyncStartable, IDisposable
+public class WeaponPresenter : IStartable, IDisposable
 {
     private readonly IWeaponModel _model;
     private readonly WeaponView _view;
+    private readonly WeaponConfig _config;
     private readonly CompositeDisposable _disposables = new CompositeDisposable();
     
-    public WeaponPresenter(IWeaponModel model, WeaponView view)
+    public WeaponPresenter(IWeaponModel model, WeaponView view, WeaponConfig config)
     {
         _model = model;
         _view = view;
+        _config = config;
     }
     
-    public async UniTask StartAsync(CancellationToken cancellation)
+    public void Start()
     {
-        Debug.Log("무기 시스템 리소스 로드 중...");
-        
-        await UniTask.Delay(TimeSpan.FromSeconds(1), cancellationToken: cancellation);
-        
-        Debug.Log("무기 시스템 초기화 완료! 바인딩 시작.");
         Bind();
     }
 
     private void Bind()
     {
-        _model.CurrentAmmo
-            .Subscribe(ammo => 
-            {
-                _view.UpdateAmmoUI(ammo);
-                if (ammo < 30)
-                {
-                    _view.PlayFireEffect();
-                }
-            })
-            .AddTo(_disposables);
-
         _view.OnFireRequested
-            .Subscribe(_ => _model.Fire())
+            .Subscribe(_ => _model.TryFire())
+            .AddTo(_disposables);
+
+        _model.CurrentAmmo
+            .Subscribe(ammo => _view.UpdateAmmoUI(ammo, _config.MaxAmmo))
+            .AddTo(_disposables);
+
+        _model.OnFired
+            .Subscribe(config => _view.PerformHitscan(config))
             .AddTo(_disposables);
     }
 
-    public void Dispose()
-    {
-        _disposables.Dispose(); 
-    }
+    public void Dispose() => _disposables.Dispose();
 }
