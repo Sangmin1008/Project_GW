@@ -7,16 +7,15 @@ using VContainer.Unity;
 
 public class WeaponPresenter : IStartable, IDisposable
 {
-    private readonly IWeaponModel _model;
+    private readonly IWeaponManagerModel _manager;
     private readonly WeaponView _view;
-    private readonly WeaponConfig _config;
-    private readonly CompositeDisposable _disposables = new CompositeDisposable();
+    private readonly CompositeDisposable _globalDisposables = new CompositeDisposable();
+    private readonly SerialDisposable _weaponDisposable = new SerialDisposable();
     
-    public WeaponPresenter(IWeaponModel model, WeaponView view, WeaponConfig config)
+    public WeaponPresenter(IWeaponManagerModel manager, WeaponView view)
     {
-        _model = model;
+        _manager = manager;
         _view = view;
-        _config = config;
     }
     
     public void Start()
@@ -27,17 +26,37 @@ public class WeaponPresenter : IStartable, IDisposable
     private void Bind()
     {
         _view.OnFireRequested
-            .Subscribe(_ => _model.TryFire())
-            .AddTo(_disposables);
-
-        _model.CurrentAmmo
-            .Subscribe(ammo => _view.UpdateAmmoUI(ammo, _config.MaxAmmo))
-            .AddTo(_disposables);
-
-        _model.OnFired
-            .Subscribe(config => _view.PerformHitscan(config))
-            .AddTo(_disposables);
+            .Where(_ => _manager.CurrentWeapon.Value != null)
+            .Subscribe(_ => _manager.CurrentWeapon.Value.TryFire())
+            .AddTo(_globalDisposables);
+        
+        // _view.OnWeaponSwapInput
+        //     .Subscribe(index => _manager.SwapWeapon(index))
+        //     .AddTo(_globalDisposables);
+        
+        _manager.CurrentWeapon
+            .Where(weapon => weapon != null)
+            .Subscribe(weapon => BindCurrentWeapon(weapon))
+            .AddTo(_globalDisposables);
     }
 
-    public void Dispose() => _disposables.Dispose();
-}
+    private void BindCurrentWeapon(IWeaponModel currentWeapon)
+    {
+        var newWeaponDisposables = new CompositeDisposable();
+
+        currentWeapon.CurrentAmmo
+            .Subscribe(ammo => _view.UpdateAmmoUI(ammo, currentWeapon.Config.MaxAmmo))
+            .AddTo(newWeaponDisposables);
+
+        currentWeapon.OnFired
+            .Subscribe(config => _view.PerformHitscan(config))
+            .AddTo(newWeaponDisposables);
+
+        _weaponDisposable.Disposable = newWeaponDisposables;
+    }
+
+    public void Dispose()
+    {
+        _globalDisposables.Dispose();
+        _weaponDisposable.Dispose();
+    }}

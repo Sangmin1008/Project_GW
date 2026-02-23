@@ -9,6 +9,8 @@ public abstract class BaseWeaponModel : IWeaponModel
     protected readonly WeaponConfig _config;
     protected readonly ReactiveProperty<int> _currentAmmo;
     protected readonly Subject<WeaponConfig> _onFired = new Subject<WeaponConfig>();
+    
+    public WeaponConfig Config => _config;
     public IReadOnlyReactiveProperty<int> CurrentAmmo => _currentAmmo;
     public IObservable<WeaponConfig> OnFired => _onFired;
 
