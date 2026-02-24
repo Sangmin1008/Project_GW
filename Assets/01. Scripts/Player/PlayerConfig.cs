@@ -13,4 +13,7 @@ public class PlayerConfig : ScriptableObject
 
     [Header("Jump Settings")] 
     public float JumpForce = 10.0f;
+    
+    [Header("Gravity Settings")]
+    public float Gravity = 19f;
 }

@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: ShotgunConfig
   m_EditorClassIdentifier: Assembly-CSharp::WeaponConfig
   WeaponName: Shotgun
-  MaxAmmo: 10
+  MaxAmmo: 40
+  MagCapacity: 10
   FireRate: 0.1
+  ReloadRate: 3
   Damage: 30
   Range: 50

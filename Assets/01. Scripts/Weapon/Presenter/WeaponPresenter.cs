@@ -29,6 +29,10 @@ public class WeaponPresenter : IStartable, IDisposable
             .Where(_ => _manager.CurrentWeapon.Value != null)
             .Subscribe(_ => _manager.CurrentWeapon.Value.TryFire())
             .AddTo(_globalDisposables);
+
+        _view.OnReloadRequested
+            .Subscribe(_ => _manager.CurrentWeapon.Value.TryReload())
+            .AddTo(_globalDisposables);
         
         // _view.OnWeaponSwapInput
         //     .Subscribe(index => _manager.SwapWeapon(index))
@@ -44,8 +48,15 @@ public class WeaponPresenter : IStartable, IDisposable
     {
         var newWeaponDisposables = new CompositeDisposable();
 
-        currentWeapon.CurrentAmmo
-            .Subscribe(ammo => _view.UpdateAmmoUI(ammo, currentWeapon.Config.MaxAmmo))
+        Observable.CombineLatest(
+                currentWeapon.CurrentAmmo, 
+                currentWeapon.ReserveAmmo, 
+                (current, reserve) => new { current, reserve }
+            )
+            .Subscribe(ammoData => 
+            {
+                _view.UpdateAmmoUI(ammoData.current, ammoData.reserve);
+            })
             .AddTo(newWeaponDisposables);
 
         currentWeapon.OnFired

@@ -5,6 +5,8 @@ public interface IWeaponModel
 {
     WeaponConfig Config { get; }
     IReadOnlyReactiveProperty<int> CurrentAmmo { get; }
+    IReadOnlyReactiveProperty<int> ReserveAmmo { get; }
     IObservable<WeaponConfig> OnFired { get; }
     void TryFire();
+    void TryReload();
 }

@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: PlayerConfig
   m_EditorClassIdentifier: Assembly-CSharp::PlayerConfig
   MoveSpeed: 5
-  RunSpeed: 8
+  RunSpeed: 7
   AimSpeed: 2
   RotationSpeed: 0.2
-  JumpForce: 10
+  JumpForce: 12
+  Gravity: -30

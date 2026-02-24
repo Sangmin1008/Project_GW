@@ -18,6 +18,11 @@ public class WeaponView : MonoBehaviour
         .EveryUpdate()
         .Where(_ => Input.Player.Attack.IsPressed())
         .Select(_ => Unit.Default);
+    
+    public IObservable<Unit> OnReloadRequested => Observable
+        .EveryUpdate()
+        .Where(_ => Input.Player.Reload.IsPressed())
+        .Select(_ => Unit.Default);
 
     [Inject]
     public void Construct(PlayerInput playerInput)

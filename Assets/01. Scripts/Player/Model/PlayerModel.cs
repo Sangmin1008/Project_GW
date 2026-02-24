@@ -30,7 +30,6 @@ public class PlayerModel : IPlayerModel
     
     private float _pitch = 0f;
     private float _yaw = 0f;
-    private const float Gravity = -19.62f;
 
     public PlayerModel(PlayerConfig config)
     {
@@ -91,7 +90,7 @@ public class PlayerModel : IPlayerModel
         }
         else
         {
-            float newY = currentVel.y + Gravity * deltaTime;
+            float newY = currentVel.y + Config.Gravity * deltaTime;
             _currentVelocity.Value = new Vector3(currentVel.x, newY, currentVel.z);
         }
     }
