@@ -13,7 +13,7 @@ public class JumpState : State
         
         _model.SetVerticalVelocity(_model.Config.JumpForce);
         
-        _model.MoveInput
+        Observable.EveryUpdate()
             .Subscribe(_ => _model.CalculateVelocity(_model.Config.MoveSpeed))
             .AddTo(StateDisposables);
 

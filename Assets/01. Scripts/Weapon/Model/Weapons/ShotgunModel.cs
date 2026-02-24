@@ -8,6 +8,6 @@ public class ShotgunModel : BaseWeaponModel
 
     public override void Fire()
     {
-        
+        Debug.Log(Config.WeaponName + " Fired!");
     }
 }

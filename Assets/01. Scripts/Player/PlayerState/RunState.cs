@@ -33,5 +33,9 @@ public class RunState : State
             .Where(g => !g)
             .Subscribe(_ => _stateMachine.ChangeState(_model.FallState))
             .AddTo(StateDisposables);
+        
+        Observable.EveryUpdate()
+            .Subscribe(_ => _model.CalculateVelocity(_model.Config.RunSpeed))
+            .AddTo(StateDisposables);
     }
 }

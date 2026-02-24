@@ -11,7 +11,7 @@ public class FallState : State
     {
         base.OnEnter();
 
-        _model.MoveInput
+        Observable.EveryUpdate()
             .Subscribe(_ => _model.CalculateVelocity(_model.Config.MoveSpeed))
             .AddTo(StateDisposables);
 
