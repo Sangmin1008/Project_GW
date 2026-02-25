@@ -14,6 +14,7 @@ public class PlayerView : MonoBehaviour
     public PlayerInput Input;
     
     private Vector3 _velocity;
+    private Vector2 _targetLookAngle;
     private CharacterController _characterController;
     private GroundDetector _groundDetector;
     private Animator _animator;
@@ -59,6 +60,7 @@ public class PlayerView : MonoBehaviour
         Cursor.visible = false;
         
         BindMovement();
+        BindLook();
     }
 
 
@@ -79,11 +81,24 @@ public class PlayerView : MonoBehaviour
 
     public void ApplyLook(Vector2 lookAngle)
     {
-        float pitch = lookAngle.x;
-        float yaw = lookAngle.y;
-        
-        cameraRoot.localRotation = Quaternion.Euler(pitch, 0, 0);
-        transform.localRotation = Quaternion.Euler(0, yaw, 0);
+        _targetLookAngle = lookAngle;
+    }
+
+    public void BindLook()
+    {
+        this.LateUpdateAsObservable()
+            .Subscribe(_ =>
+            {
+                float pitch = _targetLookAngle.x;
+                float yaw = _targetLookAngle.y;
+                
+                transform.localRotation = Quaternion.Euler(0, yaw, 0);
+                
+                if (cameraRoot != null)
+                {
+                    cameraRoot.localRotation = Quaternion.Euler(pitch, 0, 0);
+                }
+            });
     }
 
     public void PlayAnimation(string name)
