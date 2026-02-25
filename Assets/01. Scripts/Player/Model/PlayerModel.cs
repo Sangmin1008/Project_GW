@@ -16,11 +16,13 @@ public class PlayerModel : IPlayerModel
     private readonly ReactiveProperty<Vector3> _currentVelocity = new(Vector3.zero);
     private readonly ReactiveProperty<Vector2> _currentLookAngle = new(Vector2.zero);
     private readonly ReactiveProperty<string> _currentAnimation = new("Idle");
+    private readonly ReactiveProperty<float> _capturedSpeed = new(0f);
 
     public IReadOnlyReactiveProperty<PlayerStateType> CurrentState => _currentState;
     public IReadOnlyReactiveProperty<Vector3> CurrentVelocity => _currentVelocity;
     public IReadOnlyReactiveProperty<Vector2> CurrentLookAngle => _currentLookAngle;
     public IReadOnlyReactiveProperty<string> CurrentAnimation => _currentAnimation;
+    public IReadOnlyReactiveProperty<float> CapturedSpeed => _capturedSpeed;
 
     public ReactiveProperty<Vector2> MoveInput { get; } = new(Vector2.zero);
     public ReactiveProperty<bool> IsRunning { get; } = new(false);
@@ -98,5 +100,10 @@ public class PlayerModel : IPlayerModel
     public void SetCurrentAnimation(string animName)
     {
         _currentAnimation.Value = animName;
+    }
+
+    public void CaptureSpeed(float speed)
+    {
+        _capturedSpeed.Value = speed;
     }
 }

@@ -12,7 +12,7 @@ public class FallState : State
         base.OnEnter();
 
         Observable.EveryUpdate()
-            .Subscribe(_ => _model.CalculateVelocity(_model.Config.MoveSpeed))
+            .Subscribe(_ => _model.CalculateVelocity(_model.CapturedSpeed.Value))
             .AddTo(StateDisposables);
 
         _model.IsGrounded
