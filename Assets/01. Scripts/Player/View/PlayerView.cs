@@ -9,9 +9,10 @@ using VContainer;
 [RequireComponent(typeof(GroundDetector))]
 public class PlayerView : MonoBehaviour
 {
+    [SerializeField] private Transform cameraRoot;
+    
     public PlayerInput Input;
     
-    private Camera _camera;
     private Vector3 _velocity;
     private CharacterController _characterController;
     private GroundDetector _groundDetector;
@@ -44,7 +45,6 @@ public class PlayerView : MonoBehaviour
 
     void Awake()
     {
-        _camera = Camera.main;
         _characterController = GetComponent<CharacterController>();
         _groundDetector = GetComponent<GroundDetector>();
         _animator = GetComponentInChildren<Animator>();
@@ -82,7 +82,7 @@ public class PlayerView : MonoBehaviour
         float pitch = lookAngle.x;
         float yaw = lookAngle.y;
         
-        _camera.transform.localRotation = Quaternion.Euler(pitch, 0, 0);
+        cameraRoot.localRotation = Quaternion.Euler(pitch, 0, 0);
         transform.localRotation = Quaternion.Euler(0, yaw, 0);
     }
 

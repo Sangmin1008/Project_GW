@@ -16,6 +16,6 @@ MonoBehaviour:
   MaxAmmo: 40
   MagCapacity: 10
   FireRate: 0.1
-  ReloadRate: 3
+  ReloadRate: 1
   Damage: 30
   Range: 50
