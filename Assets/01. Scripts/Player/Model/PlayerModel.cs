@@ -55,34 +55,17 @@ public class PlayerModel : IPlayerModel
     
     public void CalculateVelocity(float speed)
     {
-        float currentYVelocity = _currentVelocity.Value.y;
-
         if (MoveInput.Value.sqrMagnitude > 0.01f)
         {
             Vector3 localDirection = new Vector3(MoveInput.Value.x, 0, MoveInput.Value.y);
             Quaternion playerRotation = Quaternion.Euler(0, _currentLookAngle.Value.y, 0);
             Vector3 worldDirection = playerRotation * localDirection;
-
-            if (IsGrounded.Value)
-            {
-                worldDirection = Vector3.ProjectOnPlane(worldDirection, _groundNormal).normalized;
-                _currentVelocity.Value = new Vector3(worldDirection.x * speed, worldDirection.y * speed, worldDirection.z * speed);
-            }
-            else
-            {
-                _currentVelocity.Value = new Vector3(worldDirection.x * speed, currentYVelocity, worldDirection.z * speed);
-            }
+            
+            _currentVelocity.Value = new Vector3(worldDirection.x * speed, _currentVelocity.Value.y, worldDirection.z * speed);
         }
         else
         {
-            if (IsGrounded.Value)
-            {
-                _currentVelocity.Value = Vector3.zero; 
-            }
-            else
-            {
-                _currentVelocity.Value = new Vector3(0, currentYVelocity, 0);
-            }
+            _currentVelocity.Value = new Vector3(0, _currentVelocity.Value.y, 0);
         }
     }
 
@@ -104,10 +87,9 @@ public class PlayerModel : IPlayerModel
     {
         Vector3 currentVel = _currentVelocity.Value;
 
-        if (IsGrounded.Value)
+        if (IsGrounded.Value && currentVel.y < 0)
         {
-            float groundedY = currentVel.y > 0 ? currentVel.y : currentVel.y - 2f;
-            _currentVelocity.Value = new Vector3(currentVel.x, groundedY, currentVel.z);
+            _currentVelocity.Value = new Vector3(currentVel.x, -2f, currentVel.z);
         }
         else
         {
