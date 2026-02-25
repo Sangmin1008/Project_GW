@@ -22,5 +22,6 @@ public interface IPlayerModel
     public void SetGrounded(bool isGrounded);
     public void ApplyGravity(float deltaTime);
     public void CaptureSpeed(float speed);
+    public void ApplyRecoil(float recoilPitch, float recoilYaw);
     void Look(Vector2 input);
 }

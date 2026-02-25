@@ -106,4 +106,14 @@ public class PlayerModel : IPlayerModel
     {
         _capturedSpeed.Value = speed;
     }
+    
+    public void ApplyRecoil(float recoilPitch, float recoilYaw)
+    {
+        _pitch -= recoilPitch; 
+    
+        _yaw += recoilYaw;     
+    
+        _pitch = Mathf.Clamp(_pitch, -89f, 89f);
+        _currentLookAngle.Value = new Vector2(_pitch, _yaw);
+    }
 }

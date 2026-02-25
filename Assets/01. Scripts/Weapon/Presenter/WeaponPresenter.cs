@@ -10,15 +10,17 @@ public class WeaponPresenter : IStartable, IDisposable
     private readonly IWeaponManagerModel _manager;
     private readonly WeaponView _view;
     private readonly ICameraSystem _cameraSystem;
+    private readonly IPlayerModel _playerModel;
     
     private readonly CompositeDisposable _globalDisposables = new CompositeDisposable();
     private readonly SerialDisposable _weaponDisposable = new SerialDisposable();
     
-    public WeaponPresenter(IWeaponManagerModel manager, WeaponView view, ICameraSystem cameraSystem)
+    public WeaponPresenter(IWeaponManagerModel manager, WeaponView view, ICameraSystem cameraSystem, IPlayerModel playerModel)
     {
         _manager = manager;
         _view = view;
         _cameraSystem = cameraSystem;
+        _playerModel = playerModel;
     }
     
     public void Start()
@@ -78,6 +80,8 @@ public class WeaponPresenter : IStartable, IDisposable
             {
                 _view.PerformHitscan(config);
                 _cameraSystem.PlayShake(config.ShakeType);
+                float randomYaw = UnityEngine.Random.Range(-config.RecoilYaw, config.RecoilYaw);
+                _playerModel.ApplyRecoil(config.RecoilPitch, randomYaw);
             })
             .AddTo(newWeaponDisposables);
 
