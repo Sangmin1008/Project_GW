@@ -42,6 +42,7 @@ public abstract class BaseWeaponModel : IWeaponModel
             
             _onFired.OnNext(_config);
             
+            
             Fire();
         }
     }

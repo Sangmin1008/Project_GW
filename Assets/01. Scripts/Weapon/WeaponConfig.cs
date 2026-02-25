@@ -13,4 +13,6 @@ public class WeaponConfig : ScriptableObject
     public float ReloadRate = 3f;
     public int Damage = 10;
     public float Range = 100f;
+    public float AimFOV = 40f;
+    public CameraShakeType ShakeType;
 }

@@ -9,13 +9,16 @@ public class WeaponPresenter : IStartable, IDisposable
 {
     private readonly IWeaponManagerModel _manager;
     private readonly WeaponView _view;
+    private readonly ICameraSystem _cameraSystem;
+    
     private readonly CompositeDisposable _globalDisposables = new CompositeDisposable();
     private readonly SerialDisposable _weaponDisposable = new SerialDisposable();
     
-    public WeaponPresenter(IWeaponManagerModel manager, WeaponView view)
+    public WeaponPresenter(IWeaponManagerModel manager, WeaponView view, ICameraSystem cameraSystem)
     {
         _manager = manager;
         _view = view;
+        _cameraSystem = cameraSystem;
     }
     
     public void Start()
@@ -42,6 +45,17 @@ public class WeaponPresenter : IStartable, IDisposable
             .Where(weapon => weapon != null)
             .Subscribe(weapon => BindCurrentWeapon(weapon))
             .AddTo(_globalDisposables);
+        
+        _view.OnAimInput
+            .Subscribe(isAiming => 
+            {
+                if (_manager.CurrentWeapon.Value != null)
+                {
+                    float aimFov = _manager.CurrentWeapon.Value.Config.AimFOV;
+                    _cameraSystem.SetAimState(isAiming, aimFov);
+                }
+            })
+            .AddTo(_globalDisposables);
     }
 
     private void BindCurrentWeapon(IWeaponModel currentWeapon)
@@ -60,7 +74,11 @@ public class WeaponPresenter : IStartable, IDisposable
             .AddTo(newWeaponDisposables);
 
         currentWeapon.OnFired
-            .Subscribe(config => _view.PerformHitscan(config))
+            .Subscribe(config =>
+            {
+                _view.PerformHitscan(config);
+                _cameraSystem.PlayShake(config.ShakeType);
+            })
             .AddTo(newWeaponDisposables);
 
         _weaponDisposable.Disposable = newWeaponDisposables;

@@ -19,3 +19,5 @@ MonoBehaviour:
   ReloadRate: 1
   Damage: 30
   Range: 50
+  AimFOV: 40
+  ShakeType: 2

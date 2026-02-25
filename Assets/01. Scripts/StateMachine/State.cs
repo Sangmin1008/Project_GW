@@ -32,7 +32,7 @@ public abstract class State
 
     protected virtual void OnEnter()
     {
-        Debug.Log("Current State = " + _animationName);
+        // Debug.Log("Current State = " + _animationName);
     }
     protected virtual void OnExit() {}
 }

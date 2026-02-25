@@ -12,9 +12,14 @@ public class GameLifetimeScope : LifetimeScope
     [SerializeField] private WeaponView weaponView;
     [SerializeField] private WeaponDatabase weaponDatabase;
     
+    [Header("Camera Settings")]
+    [SerializeField] private CameraSystemView cameraSystemView;
+    
     protected override void Configure(IContainerBuilder builder)
     {
         builder.Register<PlayerInput>(Lifetime.Singleton);
+        
+        builder.RegisterComponent(cameraSystemView).As<ICameraSystem>();
         
         builder.RegisterInstance(playerConfig);
         builder.Register<IPlayerModel, PlayerModel>(Lifetime.Singleton);
