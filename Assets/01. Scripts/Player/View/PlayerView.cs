@@ -37,6 +37,10 @@ public class PlayerView : MonoBehaviour
         .EveryUpdate()
         .Select(_ => _groundDetector.IsGrounded)
         .DistinctUntilChanged();
+    public IObservable<Vector3> OnGroundNormal => Observable
+        .EveryUpdate()
+        .Select(_ => _groundDetector.GroundNormal)
+        .DistinctUntilChanged();
     
     [Inject]
     public void Construct(PlayerInput playerInput)

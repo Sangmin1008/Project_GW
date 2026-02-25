@@ -58,6 +58,10 @@ public class PlayerPresenter : IStartable, IDisposable
             .Where(g => !g)
             .Subscribe(_ => _model.CaptureSpeed(_model.IsRunning.Value ? _model.Config.RunSpeed : _model.Config.MoveSpeed))
             .AddTo(_disposables);
+        
+        _view.OnGroundNormal
+            .Subscribe(normal => _model.SetGroundNormal(normal))
+            .AddTo(_disposables);
 
     }
 

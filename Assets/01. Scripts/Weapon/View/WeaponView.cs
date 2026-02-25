@@ -45,7 +45,11 @@ public class WeaponView : MonoBehaviour
     
     public void PerformHitscan(WeaponConfig config)
     {
-        if (muzzleFlash != null) muzzleFlash.Play();
+        if (muzzleFlash != null)
+        {
+            muzzleFlash.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            muzzleFlash.Play();
+        }
 
         if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out RaycastHit hit, config.Range))
         {
