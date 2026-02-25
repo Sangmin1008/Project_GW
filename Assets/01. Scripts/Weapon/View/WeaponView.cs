@@ -21,7 +21,7 @@ public class WeaponView : MonoBehaviour
     
     public IObservable<Unit> OnReloadRequested => Observable
         .EveryUpdate()
-        .Where(_ => Input.Player.Reload.IsPressed())
+        .Where(_ => Input.Player.Reload.WasPressedThisFrame())
         .Select(_ => Unit.Default);
 
     [Inject]
