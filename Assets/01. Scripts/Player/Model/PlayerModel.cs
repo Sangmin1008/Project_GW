@@ -32,6 +32,7 @@ public class PlayerModel : IPlayerModel
     
     private float _pitch = 0f;
     private float _yaw = 0f;
+    private Vector3 _slopeDirection = Vector3.forward;
     private Vector3 _groundNormal = Vector3.up;
 
     public PlayerModel(PlayerConfig config)
@@ -52,20 +53,34 @@ public class PlayerModel : IPlayerModel
     public void SetRunInput(bool isRunning) => IsRunning.Value = isRunning;
     public void SetJumpInput(bool isJumping) => IsJumping.Value = isJumping;
     public void SetGrounded(bool isGrounded) => IsGrounded.Value = isGrounded;
+    public void SetSlopeDirection(Vector3 slope) => _slopeDirection = slope;
+    public void SetGroundNormal(Vector3 normal) => _groundNormal = normal;
+    
     
     public void CalculateVelocity(float speed)
     {
+        float currentYVelocity = _currentVelocity.Value.y;
+
         if (MoveInput.Value.sqrMagnitude > 0.01f)
         {
             Vector3 localDirection = new Vector3(MoveInput.Value.x, 0, MoveInput.Value.y);
             Quaternion playerRotation = Quaternion.Euler(0, _currentLookAngle.Value.y, 0);
             Vector3 worldDirection = playerRotation * localDirection;
-            
-            _currentVelocity.Value = new Vector3(worldDirection.x * speed, _currentVelocity.Value.y, worldDirection.z * speed);
+
+            if (OnSlope())
+            {
+                Vector3 slopeDirection = Vector3.ProjectOnPlane(worldDirection, _groundNormal).normalized;
+                
+                _currentVelocity.Value = new Vector3(slopeDirection.x * speed, slopeDirection.y * speed, slopeDirection.z * speed);
+            }
+            else
+            {
+                _currentVelocity.Value = new Vector3(worldDirection.x * speed, currentYVelocity, worldDirection.z * speed);
+            }
         }
         else
         {
-            _currentVelocity.Value = new Vector3(0, _currentVelocity.Value.y, 0);
+            _currentVelocity.Value = new Vector3(0, currentYVelocity, 0);
         }
     }
 
@@ -87,9 +102,11 @@ public class PlayerModel : IPlayerModel
     {
         Vector3 currentVel = _currentVelocity.Value;
 
-        if (IsGrounded.Value && currentVel.y < 0)
+        if (IsGrounded.Value && currentVel.y <= 0)
         {
-            _currentVelocity.Value = new Vector3(currentVel.x, -2f, currentVel.z);
+            float groundedY = Mathf.Min(currentVel.y, -2f);
+            
+            _currentVelocity.Value = new Vector3(currentVel.x, groundedY, currentVel.z);
         }
         else
         {
@@ -118,5 +135,12 @@ public class PlayerModel : IPlayerModel
         _currentLookAngle.Value = new Vector2(_pitch, _yaw);
     }
     
-    public void SetGroundNormal(Vector3 normal) => _groundNormal = normal;
+    private bool OnSlope()
+    {
+        if (!IsGrounded.Value) return false;
+        
+        float angle = Vector3.Angle(Vector3.up, _groundNormal);
+        return angle > 0.1f && angle < 89f;
+    }
+    
 }

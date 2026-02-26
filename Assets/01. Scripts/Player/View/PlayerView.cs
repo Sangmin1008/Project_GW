@@ -41,6 +41,10 @@ public class PlayerView : MonoBehaviour
         .EveryUpdate()
         .Select(_ => _groundDetector.GroundNormal)
         .DistinctUntilChanged();
+    public IObservable<Vector3> OnSlopeDirection => Observable
+        .EveryUpdate()
+        .Select(_ => _groundDetector.SlopeDirection)
+        .DistinctUntilChanged();
     
     [Inject]
     public void Construct(PlayerInput playerInput)

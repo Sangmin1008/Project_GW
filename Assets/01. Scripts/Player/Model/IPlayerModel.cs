@@ -23,6 +23,7 @@ public interface IPlayerModel
     public void ApplyGravity(float deltaTime);
     public void CaptureSpeed(float speed);
     public void ApplyRecoil(float recoilPitch, float recoilYaw);
+    public void SetSlopeDirection(Vector3 slope);
     public void SetGroundNormal(Vector3 normal);
     void Look(Vector2 input);
 }

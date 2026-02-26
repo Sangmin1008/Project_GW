@@ -11,6 +11,7 @@ public class IdleState : State
     {
         base.OnEnter();
         _model.CalculateVelocity(0f);
+        _model.SetVerticalVelocity(0f);
 
         _model.IsGrounded
             .Where(g => !g)

@@ -59,6 +59,10 @@ public class PlayerPresenter : IStartable, IDisposable
             .Subscribe(_ => _model.CaptureSpeed(_model.IsRunning.Value ? _model.Config.RunSpeed : _model.Config.MoveSpeed))
             .AddTo(_disposables);
         
+        _view.OnSlopeDirection
+            .Subscribe(slopeDir => _model.SetSlopeDirection(slopeDir))
+            .AddTo(_disposables);
+        
         _view.OnGroundNormal
             .Subscribe(normal => _model.SetGroundNormal(normal))
             .AddTo(_disposables);
