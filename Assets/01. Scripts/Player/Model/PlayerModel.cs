@@ -32,7 +32,6 @@ public class PlayerModel : IPlayerModel
     
     private float _pitch = 0f;
     private float _yaw = 0f;
-    private Vector3 _slopeDirection = Vector3.forward;
     private Vector3 _groundNormal = Vector3.up;
 
     public PlayerModel(PlayerConfig config)
@@ -53,7 +52,6 @@ public class PlayerModel : IPlayerModel
     public void SetRunInput(bool isRunning) => IsRunning.Value = isRunning;
     public void SetJumpInput(bool isJumping) => IsJumping.Value = isJumping;
     public void SetGrounded(bool isGrounded) => IsGrounded.Value = isGrounded;
-    public void SetSlopeDirection(Vector3 slope) => _slopeDirection = slope;
     public void SetGroundNormal(Vector3 normal) => _groundNormal = normal;
     
     
