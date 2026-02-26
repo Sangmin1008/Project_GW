@@ -56,6 +56,7 @@ public class WeaponPresenter : IStartable, IDisposable
                     float aimFov = _manager.CurrentWeapon.Value.Config.AimFOV;
                     _cameraSystem.SetAimState(isAiming, aimFov);
                 }
+                _playerModel.SetAimState(isAiming);
             })
             .AddTo(_globalDisposables);
     }

@@ -56,7 +56,17 @@ public class PlayerPresenter : IStartable, IDisposable
 
         _view.OnGroundedState
             .Where(g => !g)
-            .Subscribe(_ => _model.CaptureSpeed(_model.IsRunning.Value ? _model.Config.RunSpeed : _model.Config.MoveSpeed))
+            .Subscribe(_ => 
+            {
+                float speedToCapture = _model.Config.MoveSpeed;
+            
+                if (_model.IsAiming.Value) 
+                    speedToCapture = _model.Config.AimSpeed;
+                else if (_model.IsRunning.Value) 
+                    speedToCapture = _model.Config.RunSpeed;
+
+                _model.CaptureSpeed(speedToCapture);
+            })
             .AddTo(_disposables);
         
         _view.OnGroundNormal

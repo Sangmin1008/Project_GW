@@ -14,9 +14,10 @@ public interface IPlayerModel
     ReactiveProperty<bool> IsRunning { get; }
     ReactiveProperty<bool> IsJumping { get; }
     ReactiveProperty<bool> IsGrounded { get; }
+    ReactiveProperty<bool> IsAiming { get; }
 
     
-    void SetMoveInput(Vector2 input);
+    public void SetMoveInput(Vector2 input);
     public void SetRunInput(bool isRunning);
     public void SetJumpInput(bool isJumping);
     public void SetGrounded(bool isGrounded);
@@ -24,5 +25,6 @@ public interface IPlayerModel
     public void CaptureSpeed(float speed);
     public void ApplyRecoil(float recoilPitch, float recoilYaw);
     public void SetGroundNormal(Vector3 normal);
-    void Look(Vector2 input);
+    public void SetAimState(bool isAiming);
+    public void Look(Vector2 input);
 }

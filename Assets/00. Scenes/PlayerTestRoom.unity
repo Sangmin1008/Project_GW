@@ -478,7 +478,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CameraSystemView
   _playerVCam: {fileID: 1905704224}
   _defaultFOV: 60
-  _zoomSpeed: 15
+  _zoomSpeed: 30
   _shakeDataList:
   - ShakeType: 2
     ImpulseSource: {fileID: 1082489896}

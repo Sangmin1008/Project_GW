@@ -44,7 +44,6 @@ public class CameraSystemView : MonoBehaviour, ICameraSystem
     {
         if (_shakeSources.TryGetValue(type, out var source))
         {
-            Debug.Log($"[CameraSystem] {type} 흔들림 발생!");
             source.GenerateImpulseWithForce(intensityMultiplier);
         }
     }

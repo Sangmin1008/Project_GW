@@ -28,6 +28,7 @@ public class PlayerModel : IPlayerModel
     public ReactiveProperty<bool> IsRunning { get; } = new(false);
     public ReactiveProperty<bool> IsJumping { get; } = new(false);
     public ReactiveProperty<bool> IsGrounded { get; } = new(true);
+    public ReactiveProperty<bool> IsAiming { get; } = new(false);
     
     
     private float _pitch = 0f;
@@ -53,10 +54,19 @@ public class PlayerModel : IPlayerModel
     public void SetJumpInput(bool isJumping) => IsJumping.Value = isJumping;
     public void SetGrounded(bool isGrounded) => IsGrounded.Value = isGrounded;
     public void SetGroundNormal(Vector3 normal) => _groundNormal = normal;
+    public void SetAimState(bool isAiming) => IsAiming.Value = isAiming;
     
     
     public void CalculateVelocity(float speed)
     {
+        if (IsGrounded.Value)
+        {
+            if (IsAiming.Value) 
+            {
+                speed = Config.AimSpeed;
+            }
+        }
+        
         float currentYVelocity = _currentVelocity.Value.y;
 
         if (MoveInput.Value.sqrMagnitude > 0.01f)

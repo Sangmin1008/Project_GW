@@ -18,3 +18,4 @@ MonoBehaviour:
   RotationSpeed: 0.2
   JumpForce: 12
   Gravity: -30
+  MaxSlopeAngle: 30
