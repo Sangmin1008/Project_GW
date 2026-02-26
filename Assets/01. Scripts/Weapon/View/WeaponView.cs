@@ -26,9 +26,9 @@ public class WeaponView : MonoBehaviour
     
     public IObservable<bool> OnAimInput => Observable
         .EveryUpdate()
-        .Select(_ => Input.Player.Aim.IsPressed())
-        .DistinctUntilChanged();
-
+        .Where(_ => Input.Player.Aim.WasPressedThisFrame())
+        .Scan(false, (isAiming, _) => !isAiming);
+    
     [Inject]
     public void Construct(PlayerInput playerInput)
     {

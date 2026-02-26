@@ -18,5 +18,5 @@ public class PlayerConfig : ScriptableObject
     public float Gravity = 19f;
     
     [Header("Slope Settings")]
-    public float SlopeAngle = 50.0f;
+    public float MaxSlopeAngle = 50.0f;
 }

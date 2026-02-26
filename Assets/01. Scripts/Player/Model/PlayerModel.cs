@@ -138,7 +138,6 @@ public class PlayerModel : IPlayerModel
         if (!IsGrounded.Value) return false;
         
         float angle = Vector3.Angle(Vector3.up, _groundNormal);
-        return angle > 0.1f && angle < 89f;
+        return angle > 0.1f && angle < Config.MaxSlopeAngle;
     }
-    
 }
