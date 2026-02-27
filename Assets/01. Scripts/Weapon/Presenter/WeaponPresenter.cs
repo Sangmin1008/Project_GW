@@ -64,6 +64,8 @@ public class WeaponPresenter : IStartable, IDisposable
     private void BindCurrentWeapon(IWeaponModel currentWeapon)
     {
         var newWeaponDisposables = new CompositeDisposable();
+        
+        _view.SetWeaponName(currentWeapon.Config.WeaponName);
 
         Observable.CombineLatest(
                 currentWeapon.CurrentAmmo, 

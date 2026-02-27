@@ -9,6 +9,7 @@ public class WeaponView : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private TextMeshProUGUI ammoText;
+    [SerializeField] private TextMeshProUGUI weaponNameText;
     [SerializeField] private ParticleSystem muzzleFlash;
     [SerializeField] private Transform cameraTransform;
 
@@ -37,6 +38,8 @@ public class WeaponView : MonoBehaviour
     
     void OnEnable() => Input?.Enable();
     void OnDisable() => Input?.Disable();
+    
+    public void SetWeaponName(string weaponName) => weaponNameText.text = weaponName;
 
     public void UpdateAmmoUI(int ammo, int maxAmmo)
     {

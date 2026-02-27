@@ -15,7 +15,7 @@ MonoBehaviour:
   WeaponName: Shotgun
   MaxAmmo: 240
   MagCapacity: 40
-  FireRate: 0.1
+  FireRate: 0.2
   ReloadRate: 1
   Damage: 30
   Range: 50
