@@ -17,4 +17,11 @@ public class WeaponConfig : ScriptableObject
     public float RecoilYaw = 1f;
     public float RecoilPitch = 1f;
     public CameraShakeType ShakeType;
+    
+    [Header("Crosshair Settings")]
+    public Sprite CrosshairDotSprite;
+    public Sprite CrosshairOuterSprite;
+    public Vector2 OuterDefaultSize = new Vector2(100f, 100f);
+    public Vector2 OuterAimSize = new Vector2(40f, 40f);
+    public float CrosshairShrinkSpeed = 15f;
 }

@@ -23,3 +23,8 @@ MonoBehaviour:
   RecoilYaw: 1
   RecoilPitch: 1
   ShakeType: 2
+  CrosshairDotSprite: {fileID: 21300000, guid: 3e60add3ecb1915459d46e3b3a0287f8, type: 3}
+  CrosshairOuterSprite: {fileID: 21300000, guid: 7789b657ea330f94d9b70d6d4a117aed, type: 3}
+  OuterDefaultSize: {x: 100, y: 100}
+  OuterAimSize: {x: 40, y: 40}
+  CrosshairShrinkSpeed: 15

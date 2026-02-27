@@ -53,8 +53,11 @@ public class WeaponPresenter : IStartable, IDisposable
             {
                 if (_manager.CurrentWeapon.Value != null)
                 {
-                    float aimFov = _manager.CurrentWeapon.Value.Config.AimFOV;
+                    WeaponConfig config = _manager.CurrentWeapon.Value.Config;
+                    float aimFov = config.AimFOV;
+                    
                     _cameraSystem.SetAimState(isAiming, aimFov);
+                    _view.SetAimCrosshair(isAiming, config);
                 }
                 _playerModel.SetAimState(isAiming);
             })
@@ -66,6 +69,7 @@ public class WeaponPresenter : IStartable, IDisposable
         var newWeaponDisposables = new CompositeDisposable();
         
         _view.SetWeaponName(currentWeapon.Config.WeaponName);
+        _view.SetupCrosshair(currentWeapon.Config);
 
         Observable.CombineLatest(
                 currentWeapon.CurrentAmmo, 
