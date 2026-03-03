@@ -85,10 +85,17 @@ public class WeaponPresenter : IStartable, IDisposable
         currentWeapon.OnFired
             .Subscribe(config =>
             {
-                _view.PerformHitscan(config);
+                bool isAiming = _playerModel.IsAiming.Value;
+
+                _view.PerformHitscan(config, isAiming).Forget();
+                
                 _cameraSystem.PlayShake(config.ShakeType);
-                float randomYaw = UnityEngine.Random.Range(-config.RecoilYaw, config.RecoilYaw);
-                _playerModel.ApplyRecoil(config.RecoilPitch, randomYaw);
+
+                float currentPitch = isAiming ? config.AimRecoilPitch : config.HipRecoilPitch;
+                float currentYaw = isAiming ? config.AimRecoilYaw : config.HipRecoilYaw;
+
+                float randomYaw = UnityEngine.Random.Range(-currentYaw, currentYaw);
+                _playerModel.ApplyRecoil(currentPitch, randomYaw);
             })
             .AddTo(newWeaponDisposables);
 

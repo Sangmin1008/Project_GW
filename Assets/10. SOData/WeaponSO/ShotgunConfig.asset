@@ -28,3 +28,6 @@ MonoBehaviour:
   OuterDefaultSize: {x: 100, y: 100}
   OuterAimSize: {x: 40, y: 40}
   CrosshairShrinkSpeed: 15
+  BulletSpeed: 800
+  ImpactParticlePrefab: {fileID: 0}
+  BulletHoleDecalPrefab: {fileID: 6751418821957422808, guid: 7d018d27aa9e46549ad50473fe6c88d6, type: 3}

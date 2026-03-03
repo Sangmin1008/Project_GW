@@ -1,4 +1,5 @@
 using System;
+using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -100,7 +101,7 @@ public class WeaponView : MonoBehaviour
         _targetOuterSize = isAiming ? config.OuterAimSize : config.OuterDefaultSize;
     }
 
-    public void PerformHitscan(WeaponConfig config)
+    public async UniTaskVoid PerformHitscan(WeaponConfig config, bool isAiming)
     {
         if (muzzleFlash != null)
         {
@@ -108,9 +109,37 @@ public class WeaponView : MonoBehaviour
             muzzleFlash.Play();
         }
 
-        if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out RaycastHit hit, config.Range))
+        float currentSpread = isAiming ? config.AimSpread : config.HipSpread;
+
+        Vector2 spreadOffset = UnityEngine.Random.insideUnitCircle * currentSpread;
+        
+        Vector3 shootDirection = cameraTransform.forward 
+                                 + (cameraTransform.right * spreadOffset.x) 
+                                 + (cameraTransform.up * spreadOffset.y);
+        shootDirection.Normalize();
+
+        if (Physics.Raycast(cameraTransform.position, shootDirection, out RaycastHit hit, config.Range))
         {
+            float distance = hit.distance;
+            float travelTime = distance / config.BulletSpeed;
+
+            if (travelTime > 0)
+            {
+                await UniTask.Delay(TimeSpan.FromSeconds(travelTime), ignoreTimeScale: false);
+            }
             
+            if (config.ImpactParticlePrefab != null)
+            {
+                Instantiate(config.ImpactParticlePrefab, hit.point, Quaternion.LookRotation(hit.normal));
+            }
+
+            if (config.BulletHoleDecalPrefab != null)
+            {
+                Vector3 decalPos = hit.point + (hit.normal * 0.01f);
+                Quaternion decalRot = Quaternion.LookRotation(-hit.normal); 
+                
+                Instantiate(config.BulletHoleDecalPrefab, decalPos, decalRot);
+            }
         }
     }
 }
